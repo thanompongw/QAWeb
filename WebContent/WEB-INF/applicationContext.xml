@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<!-- Declare a JDBC entityManagerFactory-->
+	<bean id="apsDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/apsDB" />
+        <property name="lookupOnStartup" value="true" />
+        <property name="cache" value="true" />
+        <property name="proxyInterface" value="javax.sql.DataSource" />
+    </bean>
+
+	<!-- Declare a transaction manager-->
+	<bean id="txManagerAPS" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="apsDataSource" />
+	</bean>
+    
+    <!-- Declare a JDBC Template-->
+	<bean id="apsJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"> 
+    	<property name="dataSource" ref="apsDataSource"/>
+    </bean>
+	
+	<!-- Definition SErvice Bean -->
+   <!-- <bean id="monthEndService" class="co.th.genth.aps.service.MonthEndService">
+      	<property name="txManager"  ref="txManagerAPS" />    
+   </bean> -->
+
+	<!-- <tx:annotation-driven mode="proxy" transaction-manager="txManagerAPS" /> -->
+
+	<!-- This required so that Spring can recognize our annotated beans -->
+	<context:annotation-config />
+
+	<context:component-scan base-package="co.th.genth.qa" />
+	<context:component-scan base-package="org.springframework.jdbc.datasource" />
+
+	<!-- Configures the annotation-driven Spring MVC Controller programming 
+		model. Note that, with Spring 3.0, this tag works in Servlet MVC only! -->
+	<mvc:annotation-driven />
+
+	<mvc:interceptors>
+		<bean id="webContentInterceptor"
+			class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+			<property name="cacheSeconds" value="0" />
+			<property name="useCacheControlHeader" value="true" />
+			<property name="useCacheControlNoStore" value="true" />
+			<property name="useExpiresHeader" value="true" />
+		</bean>
+	</mvc:interceptors>
+	
+	<bean id="loggingServiceInterceptor" class="co.th.genth.qa.logging.LoggingServiceInterceptor"/>
+    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="beanNames">
+            <value>*Service</value>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>loggingServiceInterceptor</value>
+            </list>
+        </property>
+    </bean>
+	
+	<bean id="loggingControllerInterceptor" class="co.th.genth.qa.logging.LoggingControllerInterceptor"/>
+    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="beanNames">
+            <value>*Controller</value>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>loggingControllerInterceptor</value>
+            </list>
+        </property>
+    </bean>
+</beans>

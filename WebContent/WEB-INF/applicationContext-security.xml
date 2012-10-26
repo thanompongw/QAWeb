@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security-3.0.4.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<security:global-method-security secured-annotations="enabled"/>
+	
+	<!-- This is where we configure Spring-Security -->
+	<security:http auto-config="false" use-expressions="true" entry-point-ref="authenticationEntryPoint">
+		
+		<security:access-denied-handler ref="accessDeniedHandler" />
+		<security:intercept-url pattern="/index.html" access="permitAll"/>
+		<security:intercept-url pattern="/main.html" access="hasAnyRole('ROLE_SUPERVISOR', 'ROLE_ADMIN')"/>
+		<!-- <security:intercept-url pattern="/user/**" access="permitAll"/>
+		<security:intercept-url pattern="/calculate/**" access="hasAnyRole('ROLE_SUPERVISOR', 'ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/import/**" access="hasAnyRole('ROLE_SUPERVISOR', 'ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/monthEnd/**" access="hasAnyRole('ROLE_SUPERVISOR', 'ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/policy/**" access="hasAnyRole('ROLE_SUPERVISOR', 'ROLE_ADMIN')"/> -->
+		<security:intercept-url pattern="/**/*.html" access="hasAnyRole('ROLE_SUPERVISOR', 'ROLE_OFFICER', 'ROLE_ADMIN')"/>
+
+		<security:logout logout-success-url="/index.html" />
+		
+		<!-- 
+		   Querying the SessionRegistry for currently authenticated users and their sessions
+		   http://static.springsource.org/spring-security/site/docs/3.1.x/reference/session-mgmt.html#list-authenticated-principals 
+		-->
+		<security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER" />
+		<security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER"/>
+		<security:session-management session-authentication-strategy-ref="sas"/>
+
+	</security:http>
+	
+	<bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"
+    	p:authenticationManager-ref="customAuthenticationManager"
+    	p:authenticationFailureHandler-ref="customAuthenticationFailureHandler"
+    	p:authenticationSuccessHandler-ref="customAuthenticationSuccessHandler"
+    	p:sessionAuthenticationStrategy-ref="sas" />
+    
+    <!-- Filter required by concurrent session handling package 
+   	The ConcurrentSessionFilter requires two properties, sessionRegistry, which generally points to an 
+   	instance of SessionRegistryImpl, and expiredUrl, which points to the page to display when a session has expired.
+   	See: http://static.springsource.org/spring-security/site/docs/3.1.x/reference/session-mgmt.html#list-authenticated-principals -->
+    <bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
+    	<property name="sessionRegistry" ref="sessionRegistry" />
+    	<property name="expiredUrl" value="/index.html" />
+  	</bean>
+    	
+    <bean id="customAuthenticationManager" class="co.th.genth.qa.security.web.AuthenticationManagerImpl" />
+   
+	<bean id="customAuthenticationFailureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"
+   		p:defaultFailureUrl="/index.html?error=true" />
+    
+	<bean id="customAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler"
+   		p:defaultTargetUrl="/main.html"/>
+	
+	<bean id="authenticationEntryPoint"  class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
+   		p:loginFormUrl="/index.html"/>
+   	
+   	<!--  Defines a concrete concurrent control strategy 
+    Checks whether the user in question should be allowed to proceed, by comparing the number of 
+    sessions they already have active with the configured maximumSessions value. The SessionRegistry 
+    is used as the source of data on authenticated users and session data.
+    See: http://static.springsource.org/spring-security/site/docs/3.0.x/apidocs/org/springframework/security/web/authentication/session/ConcurrentSessionControlStrategy.html-->
+   	<bean id="sas" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy"
+	    p:maximumSessions="1" >
+	    <constructor-arg name="sessionRegistry" ref="sessionRegistry" />
+	 </bean>
+   	
+   	<!-- Maintains a registry of SessionInformation instances
+    See: http://static.springsource.org/spring-security/site/docs/3.0.x/apidocs/org/springframework/security/core/session/SessionRegistry.html -->
+   	<bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+   	
+   	<!-- handler for authorization failure.  Will redirect to the login page. -->
+	<bean id="accessDeniedHandler" class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
+	    <property name="errorPage" value="/accessDenied.html" />
+	</bean>
+
+	<!-- Declare an authentication-manager to use a custom userDetailsService -->
+	<security:authentication-manager />
+	
+<!-- 	<bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/> -->
+
+	<!-- Use a Md5 encoder since the user's passwords are stored as Md5 in the database -->
+	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
+</beans>
