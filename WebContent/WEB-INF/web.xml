@@ -81,7 +81,7 @@
 	</welcome-file-list>
 	<resource-ref>
 		<description>JNDI for QA Web Datasource</description>
-		<res-ref-name>jdbc/apsDB</res-ref-name>
+		<res-ref-name>jdbc/cmsQADB</res-ref-name>
 		<res-type>javax.sql.DataSource</res-type>
 		<res-auth>Container</res-auth>
 	</resource-ref>

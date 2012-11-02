@@ -11,27 +11,27 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	
 	<!-- Declare a JDBC entityManagerFactory-->
-	<bean id="apsDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:comp/env/jdbc/apsDB" />
+	<bean id="qaDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/cmsQADB" />
         <property name="lookupOnStartup" value="true" />
         <property name="cache" value="true" />
         <property name="proxyInterface" value="javax.sql.DataSource" />
     </bean>
 
 	<!-- Declare a transaction manager-->
-	<bean id="txManagerAPS" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="apsDataSource" />
+	<bean id="txManagerQA" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="qaDataSource" />
 	</bean>
     
     <!-- Declare a JDBC Template-->
-	<bean id="apsJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"> 
-    	<property name="dataSource" ref="apsDataSource"/>
+	<bean id="qaJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"> 
+    	<property name="dataSource" ref="qaDataSource"/>
     </bean>
 	
-	<!-- Definition SErvice Bean -->
-   <!-- <bean id="monthEndService" class="co.th.genth.aps.service.MonthEndService">
-      	<property name="txManager"  ref="txManagerAPS" />    
-   </bean> -->
+	<!-- Definition Service Bean -->
+   <bean id="staffServices" class="co.th.genth.qa.services.StaffServices">
+      	<property name="txManager"  ref="txManagerQA" />    
+   </bean>
 
 	<!-- <tx:annotation-driven mode="proxy" transaction-manager="txManagerAPS" /> -->
 

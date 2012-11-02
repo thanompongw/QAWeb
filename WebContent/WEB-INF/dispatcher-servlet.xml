@@ -39,43 +39,4 @@
 			</list>
 		</property>
 	</bean>
-
-	<!-- <bean id="jacksonMessageConverter"
-		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-		<property name="objectMapper">
-			<ref bean="JacksonObjectMapper" />
-		</property>
-	</bean>
-
-	<bean id="JacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper" /> -->
-
-	<!-- <bean
-		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		<property name="mediaTypes">
-			<map>
-				<entry key="json" value="application/json" />
-			</map>
-		</property>
-		<property name="defaultViews">
-			<list>
-				<bean
-					class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
-					<property name="objectMapper">
-						<ref bean="JacksonObjectMapper" />
-					</property>
-				</bean>
-			</list>
-		</property>
-		<property name="favorPathExtension" value="false" />
-		<property name="favorParameter" value="true" />
-		<property name="useNotAcceptableStatusCode" value="true" />
-	</bean> -->
-	<!-- <bean
-		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-		<property name="messageConverters">
-			<list>
-				<ref bean="jacksonMessageConverter" />
-			</list>
-		</property>
-	</bean> -->
 </beans>

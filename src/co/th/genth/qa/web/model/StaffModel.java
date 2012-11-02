@@ -18,6 +18,8 @@
  ********************************************************/
 package co.th.genth.qa.web.model;
 
+import java.util.List;
+
 import co.th.genth.qa.domain.Staff;
 
 /**
@@ -28,6 +30,9 @@ public class StaffModel extends Staff {
 	
 	/** serialVersionUID property **/
     private static final long serialVersionUID = 6553030331176465863L;
+    
+    private List<ReferenceModel> sections;
+    private List<ReferenceModel> statuses;
 
 	/**
      * Default Constructor of StaffModel.java
@@ -35,6 +40,32 @@ public class StaffModel extends Staff {
     public StaffModel() {
 	    super();
     }
-    
-    
+
+	/**
+     * @return the sections
+     */
+    public List<ReferenceModel> getSections() {
+    	return sections;
+    }
+
+	/**
+     * @param sections the sections to set
+     */
+    public void setSections(List<ReferenceModel> sections) {
+    	this.sections = sections;
+    }
+
+	/**
+     * @return the statuses
+     */
+    public List<ReferenceModel> getStatuses() {
+    	return statuses;
+    }
+
+	/**
+     * @param statuses the statuses to set
+     */
+    public void setStatuses(List<ReferenceModel> statuses) {
+    	this.statuses = statuses;
+    }
 }

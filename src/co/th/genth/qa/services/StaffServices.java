@@ -34,10 +34,6 @@ import co.th.genth.qa.dao.StaffDao;
 import co.th.genth.qa.domain.Staff;
 import co.th.genth.qa.exception.CommonException;
 
-/**
- * @author Thanompong.W
- *
- */
 @Service(value = "staffService")
 public class StaffServices {
 	
@@ -122,7 +118,7 @@ public class StaffServices {
 			
 			Staff existingStaff = dao.findById(staff.getStaffCode());
 			
-			existingStaff.setActiveFlag(staff.getActiveFlag());
+			existingStaff.setStatusCode(staff.getStatusCode());
 			existingStaff.setUpdatedBy(staff.getUpdatedBy());
 			existingStaff.setUpdatedDate(staff.getUpdatedDate());
 			

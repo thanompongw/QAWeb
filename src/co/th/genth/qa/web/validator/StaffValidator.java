@@ -27,6 +27,7 @@ import co.th.genth.qa.common.util.ErrorUtil;
 import co.th.genth.qa.dao.StaffDao;
 import co.th.genth.qa.domain.Staff;
 import co.th.genth.qa.exception.CommonException;
+import co.th.genth.qa.exception.ErrorMessage;
 
 /**
  * @author Thanompong.W
@@ -67,27 +68,39 @@ public class StaffValidator implements Validator {
 												  "MSTD0031AERR",
 												  new Object[] { "Staff Name" });
 		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, 
+												  "sectionCode", 
+												  "MSTD0031AERR",
+												  new Object[] { "Section" });
+		
 		ValidationUtils.rejectIfEmpty(errors, 
 		                              "taskRatio", 
 									  "MSTD0031AERR",
 									  new Object[] { "Task Ratio" });
 		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, 
+		                                          "activeFlag", 
+		                                          "MSTD0031AERR",
+		                                          new Object[] { "Status" });
+		
 		Staff staff = (Staff) model;
 		
-		if (errors.getObjectName() != null 
-				&& errors.getObjectName().equals("newStaff")) {
-		
-			try {
-	            Staff existingStaff = dao.findById(staff.getStaffCode());
-	            
-	            if (existingStaff != null) {
-					errors.reject("MSTD0011AERR", 
-								  new Object[] { "Staff Code", staff.getStaffCode() }, 
-								  "");
-				}
-            } catch (CommonException cx) {
-            	errors.reject("MSTD0000AERR", ErrorUtil.getErrors(cx).get(0));
-            }
+		if (!errors.hasErrors()) {
+			if (errors.getObjectName() != null 
+					&& errors.getObjectName().equals("newStaff")) {
+			
+				try {
+		            Staff existingStaff = dao.findById(staff.getStaffCode());
+		            
+		            if (existingStaff != null) {
+						errors.reject("MSTD0011AERR", 
+									  new Object[] { "Staff Code", staff.getStaffCode() }, 
+									  "");
+					}
+	            } catch (CommonException cx) {
+	            	errors.reject("MSTD0000AERR", ((ErrorMessage) ErrorUtil.getErrors(cx).get(0)).getMessage());
+	            }
+			}			
 		}
 		
 	}

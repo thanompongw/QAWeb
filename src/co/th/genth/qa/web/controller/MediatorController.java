@@ -42,6 +42,15 @@ public class MediatorController {
 	}
 	
 	/**
+	 * Retrieves the JSP home page.
+	 */
+	@RequestMapping(value = "/tmChannel/index", method = RequestMethod.GET)
+	public String getTMChannel() {
+		
+		return "tmChannel/list";
+	}
+	
+	/**
 	 * Retrieves the JSP index page.
 	 */
 	@RequestMapping(value = "/accessDenied")

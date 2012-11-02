@@ -40,6 +40,22 @@
 		<put-attribute name="body" value="/WEB-INF/jsp/staff/create.jsp" />
 	</definition>
 
+	<definition name="staff/edit" extends="base.definition">
+		<put-attribute name="body" value="/WEB-INF/jsp/staff/edit.jsp" />
+	</definition>
+
+	<definition name="tmChannel/list" extends="base.definition">
+		<put-attribute name="body" value="/WEB-INF/jsp/tmChannel/list.jsp" />
+	</definition>
+
+	<definition name="tmChannel/create" extends="base.definition">
+		<put-attribute name="body" value="/WEB-INF/jsp/tmChannel/create.jsp" />
+	</definition>
+
+	<definition name="tmChannel/edit" extends="base.definition">
+		<put-attribute name="body" value="/WEB-INF/jsp/tmChannel/edit.jsp" />
+	</definition>
+
 	<definition name="accessDenied" extends="base.definition">
 		<put-attribute name="body" value="/WEB-INF/jsp/accessDenied.jsp" />
 	</definition>

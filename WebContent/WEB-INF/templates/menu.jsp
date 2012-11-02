@@ -8,8 +8,9 @@
 	<div class="well sidebar-nav">
 		<ul class="nav nav-list">
 			<li class="nav-header">Settings</li>
-			<li><a href="#">Staff</a></li>
-			<li><a href="#">TM Channel</a></li>
+			<li><a href="<c:url value='/user/index.html' />" id="menuId01">User</a></li>
+			<li><a href="<c:url value='/staff/index.html' />" id="menuId02">Staff</a></li>
+			<li><a href="<c:url value='/tmChannel/index.html' />" id="menuId03">TM Channel</a></li>
 			<li class="nav-header">Case</li>
 			<li><a href="#">Link</a></li>
 		</ul>

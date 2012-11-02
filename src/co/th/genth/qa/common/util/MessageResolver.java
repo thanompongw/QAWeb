@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.*;
 
+import co.th.genth.qa.exception.ErrorMessage;
+
 /**
  * @author Thanopong.W
  * 
@@ -72,25 +74,31 @@ public class MessageResolver {
 
 		return message;
 	}
-	
-	public List<String> handleErrorMsg(BindingResult result) {
-		List<String> errors = new ArrayList<String>();
-		
-		for (Object object : result.getAllErrors()) {
-			String message = "";
-			if(object instanceof FieldError) {
-		        FieldError fieldError = (FieldError) object;
-		        
-		        message = this.getMessage(fieldError.getCode(), fieldError.getArguments());
-		    }
 
-		    if(object instanceof ObjectError) {
-		        ObjectError objectError = (ObjectError) object;
-		        
-		        message = this.getMessage(objectError.getCode(), objectError.getArguments());
-		    }
+	public ErrorMessage getErrorMessage(String keyCode, Object[] msgArgs) {
+		ErrorMessage errorMessage = new ErrorMessage();
+		if (properties.get(keyCode) != null) {
+			errorMessage.setMessage(properties.get(keyCode).toString());
+		}
+
+		if (msgArgs == null || msgArgs.length == 0) {
+			return errorMessage;
+		}
+		
+		errorMessage.setMessage(MessageFormat.format(addSingleQuotation(properties.get(keyCode).toString()), 
+		                                             msgArgs));
+
+		return errorMessage;
+	}
+	
+	public List<ErrorMessage> handleFieldErrorMessage(BindingResult result) {
+		List<ErrorMessage> errors = new ArrayList<ErrorMessage>();
+		
+		for (FieldError fieldError : result.getFieldErrors()) {
+			ErrorMessage errorMessage = this.getErrorMessage(fieldError.getCode(), fieldError.getArguments());
+		    errorMessage.setFieldName(fieldError.getField());
 		    
-		    errors.add(message);
+		    errors.add(errorMessage);
 		}
 		
 		return errors;

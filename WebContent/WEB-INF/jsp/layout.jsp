@@ -1,17 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <c:url value="QAWeb" var="baseUrl" />
+<html lang="en">
 <head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+<meta http-equiv="cache-control" content="no-cache"/>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta http-equiv="expires" content="0"/>
 <link rel="shortcut icon" href="<c:url value='/images/gt.ico' />" />
 <link rel="icon" href="<c:url value='/images/gt.gif' />" type="image/gif" />
 
 <style type="text/css" media="screen">
-	@IMPORT url("<c:url value='/bootstrap/css/bootstrap.min.css' />");
+	@IMPORT url("<c:url value='/bootstrap/css/bootstrap.css' />");
+	@IMPORT url("<c:url value='/bootstrap/css/bootstrap-responsive.css' />");
 	@IMPORT url("<c:url value='/css/css3-buttons.css' />");
 	@IMPORT url("<c:url value='/css/tiptip.css' />");
-	@IMPORT url("<c:url value='/css/google-bootstrap.css' />");
 body {
 	padding-top: 60px;
 	padding-bottom: 40px;
@@ -30,32 +36,30 @@ button span.label, .button span.label {
 <!-- Placed at the end of the document so the pages load faster -->
 
 <script type="text/javascript" src="<c:url value='/js/jquery-1.8.2.min.js' />"></script>
+<script type="text/javascript" src="<c:url value='/js/jquery.tiptip.js' />"></script>
 <script type="text/javascript" src="<c:url value='/js/jquery.dataTables.min.js' />"></script>
 <script type="text/javascript" src="<c:url value='/js/DT_bootstrap.js' />"></script>
-<script type="text/javascript" src="<c:url value='/js/jquery.tiptip.js' />"></script>
 <script type="text/javascript" src="<c:url value='/bootstrap/js/bootstrap.js' />"></script>
-
-<script type="text/javascript" src="<c:url value='/js/bootstrap-popover.js' />"></script>
-<script type="text/javascript" src="<c:url value='/js/google-select.js' />"></script>
-<script type="text/javascript" src="<c:url value='/js/google-select-dropdown.js' />"></script>
+<script type="text/javascript" src="<c:url value='/js/qaApp.js' />"></script>
 
 <script type="text/javascript">
-	$("select:not([multiple])").gSelect();
-</script>
+$(document).ready(function() {
+	// Launch TipTip tooltip
+	$('.tiptip a.button, .tiptip button').tipTip();
+});
 
+</script>
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
 <!--
 [if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]
 -->
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title><tiles:getAsString name="title" /></title>
 </head>
-<html lang="en">
 <body style="background-image: url(<c:url value="/images/bg.jpg"/>);">
 	<tiles:insertAttribute name="header" />
 	<div id="main" class="container-fluid">

@@ -19,6 +19,8 @@
 package co.th.genth.qa.web.controller;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +30,8 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -67,27 +71,43 @@ public class StaffController {
 	}
 	
 	@RequestMapping(value = "create", method = RequestMethod.GET)
-	public ModelAndView initCreatePage() {
-
+	public ModelAndView showCreatePage(ModelMap model) {
+		
 		// Initialize our custom agent model wrapper
-		return new ModelAndView("staff/create", "staff", new StaffModel());
+		return new ModelAndView("tmChannel/create", "tmChannel", new StaffModel());
+	}
+	
+	@ModelAttribute("sections")
+	public List<ReferenceModel> getAllSections() {
+		
+		List<ReferenceModel> sections = new ArrayList<ReferenceModel>();
+		
+		sections.add(new ReferenceModel("CCC", "Customer Care Center"));
+		sections.add(new ReferenceModel("BR", "Business Retention"));
+		sections.add(new ReferenceModel("POS", "Policy Operation Services"));
+		
+		return sections;
+	}
+	
+	@ModelAttribute("statuses")
+	public List<ReferenceModel> getAllStatuses() {
+		
+		List<ReferenceModel> statuses = new ArrayList<ReferenceModel>();
+		
+		statuses.add(new ReferenceModel("Y", "Active"));
+		statuses.add(new ReferenceModel("N", "Inactive"));
+		
+		return statuses;
 	}
 	
 	@RequestMapping(value = "edit", method = RequestMethod.GET)
-	public ModelAndView initEditPage() {
+	public ModelAndView showEditPage() {
 
 		// Initialize our custom agent model wrapper
-		return new ModelAndView("staff/edit", "command", new StaffModel());
+		return new ModelAndView("staff/edit", "staff", new StaffModel());
 	}
 	
 	@RequestMapping(value = "list", method = RequestMethod.POST)
-	public ModelAndView list() {
-
-		// Initialize our custom agent model wrapper
-		return new ModelAndView("staff/list", "command", new StaffModel());
-	}
-	
-	@RequestMapping(value = "getListData", method = RequestMethod.POST)
 	public @ResponseBody DataTablesResponse<Staff> list(@RequestBody DataTablesRequest dtReq, 
 	                                                    HttpServletResponse response) {
 
@@ -95,19 +115,36 @@ public class StaffController {
 		return new DataTablesResponse<Staff>();
 	}
 	
-	@RequestMapping(value = "save", method = RequestMethod.POST)
-	public @ResponseBody GenericModel add(@ModelAttribute("newStaff") Staff model,
-				 						  BindingResult result,
-				 						  SessionStatus status) {
+	@RequestMapping(value = "validate", method = RequestMethod.POST)
+	public @ResponseBody QAResponse validate(Model model, 
+	                                         @ModelAttribute(value="staff") StaffModel staff, 
+	                                         BindingResult result) {
+		QAResponse response = new QAResponse();
 
-		GenericModel returnModel = new GenericModel();
+		// Do custom validation here or in your service
+		validator.validate(staff, result);
+		
+		if (!result.hasErrors()) {
+			response.setStatusCode(QAConstant.SUCCESS_CODE);
+		} else {
+			// A failure. Return a custom model as well				
+			response.setErrorMessages(messageResolver.handleFieldErrorMessage(result));
+			response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "save", method = RequestMethod.POST)
+	public String add(@ModelAttribute("newStaff") Staff model,
+				 	  BindingResult result,
+				 	  QAResponse response) {
 		try {
 			// Do custom validation here or in your service
 			validator.validate(model, result);
 			if (result.hasErrors()) {
 				// A failure. Return a custom model as well				
-				returnModel.setMessages(messageResolver.handleErrorMsg(result));
-				returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
+				response.setErrorMessages(messageResolver.handleFieldErrorMessage(result));
+				response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
 			} else {
 	
 				// Construct our staff object
@@ -123,7 +160,7 @@ public class StaffController {
 				staff.setStaffName(model.getStaffName());
 				staff.setSectionCode(model.getSectionCode());
 				staff.setTaskRatio(model.getTaskRatio());
-				staff.setActiveFlag(QAConstant.ACTIVE_FLAG);
+				staff.setStatusCode(QAConstant.ACTIVE_FLAG);
 				staff.setCreatedBy(createdBy);
 				staff.setCreatedDate(createdDate);
 				staff.setUpdatedBy(createdBy);
@@ -133,29 +170,28 @@ public class StaffController {
 				services.createStaff(staff);
 
 				// Success. Return a custom model
-				returnModel.setStatusCode(QAConstant.SUCCESS_CODE);
-				status.setComplete();
+				response.setStatusCode(QAConstant.SUCCESS_CODE);
 			}
 		} catch (CommonException cx) {
-			returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
-			returnModel.setMessages(ErrorUtil.getErrors(cx));
+			response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
+			response.setErrorMessages(ErrorUtil.getErrors(cx));
         }
 		
-		return returnModel;
+		return "create";
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public @ResponseBody GenericModel edit(@ModelAttribute("exitingStaff") Staff model,
+	public @ResponseBody QAResponse edit(@ModelAttribute("exitingStaff") Staff model,
 				 						   BindingResult result,
 				 						   SessionStatus status) {
 
-		GenericModel returnModel = new GenericModel();
+		QAResponse returnModel = new QAResponse();
 		try {
 			// Do custom validation here or in your service
 			validator.validate(model, result);
 			if (result.hasErrors()) {
 				// A failure. Return a custom model as well				
-				returnModel.setMessages(messageResolver.handleErrorMsg(result));
+				returnModel.setErrorMessages(messageResolver.handleFieldErrorMessage(result));
 				returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
 			} else {
 	
@@ -182,23 +218,23 @@ public class StaffController {
 			}
 		} catch (CommonException cx) {
 			returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
-			returnModel.setMessages(ErrorUtil.getErrors(cx));
+			returnModel.setErrorMessages(ErrorUtil.getErrors(cx));
         }
 		
 		return returnModel;
 	}
 	
 	@RequestMapping(value = "delete", method = RequestMethod.POST)
-	public @ResponseBody GenericModel delete(@ModelAttribute("exitingStaff") Staff model) {
+	public @ResponseBody QAResponse delete(@ModelAttribute("exitingStaff") Staff model) {
 
-		GenericModel returnModel = new GenericModel();
+		QAResponse returnModel = new QAResponse();
 		try {
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			
 			// Call service to get existing staff data.
 			Staff staff = new Staff();
 
-			staff.setActiveFlag(QAConstant.INACTIVE_FLAG);
+			staff.setStatusCode(QAConstant.INACTIVE_FLAG);
 			staff.setStaffCode(model.getStaffCode());
 			staff.setUpdatedBy(auth.getName());
 			staff.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
@@ -210,30 +246,8 @@ public class StaffController {
 			returnModel.setStatusCode(QAConstant.SUCCESS_CODE);
 		} catch (CommonException cx) {
 			returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
-			returnModel.setMessages(ErrorUtil.getErrors(cx));
+			returnModel.setErrorMessages(ErrorUtil.getErrors(cx));
         }
-		
-		return returnModel;
-	}
-	
-	@RequestMapping(value = "validate", method = RequestMethod.POST)
-	public @ResponseBody GenericModel validate(@ModelAttribute("newStaff") StaffModel model,
-	                                           BindingResult result,
-	                                           SessionStatus status) {
-
-		GenericModel returnModel = new GenericModel();
-		
-		// Do custom validation here or in your service
-		validator.validate(model, result);
-		if (result.hasErrors()) {
-			// A failure. Return a custom model as well
-			returnModel.setMessages(messageResolver.handleErrorMsg(result));
-			returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
-		} else {
-			// Success. Return a custom model
-			returnModel.setStatusCode(QAConstant.SUCCESS_CODE);
-			status.setComplete();
-		}
 		
 		return returnModel;
 	}

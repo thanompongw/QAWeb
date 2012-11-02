@@ -66,7 +66,7 @@ public class StaffDaoImpl implements StaffDao {
 	        staff.setStaffName(rs.getString("STAFF_NAME"));
 	        staff.setSectionCode(rs.getString("SECTION_CODE"));
 	        staff.setTaskRatio(rs.getInt("TASK_RATIO"));
-	        staff.setActiveFlag(rs.getString("ACTIVE_FLAG"));
+	        staff.setStatusCode(rs.getString("ACTIVE_FLAG"));
 	        staff.setCreatedDate(rs.getTimestamp("CREATED_DT"));
 	        staff.setCreatedBy(rs.getString("CREATED_BY"));
 	        staff.setUpdatedDate(rs.getTimestamp("UPDATED_DT"));
@@ -244,7 +244,7 @@ public class StaffDaoImpl implements StaffDao {
 					pstm.setString(parameterIndex++, staff.getStaffCode());
 					pstm.setString(parameterIndex++, staff.getStaffName());
 					pstm.setString(parameterIndex++, staff.getSectionCode());
-					pstm.setString(parameterIndex++, staff.getActiveFlag());
+					pstm.setString(parameterIndex++, staff.getStatusCode());
 					pstm.setInt(parameterIndex++, staff.getTaskRatio());
 					pstm.setTimestamp(parameterIndex++, staff.getCreatedDate());
 					pstm.setString(parameterIndex++, staff.getCreatedBy());
@@ -287,7 +287,7 @@ public class StaffDaoImpl implements StaffDao {
 					
 					pstm.setString(parameterIndex++, staff.getStaffName());
 					pstm.setString(parameterIndex++, staff.getSectionCode());
-					pstm.setString(parameterIndex++, staff.getActiveFlag());
+					pstm.setString(parameterIndex++, staff.getStatusCode());
 					pstm.setInt(parameterIndex++, staff.getTaskRatio());
 					pstm.setTimestamp(parameterIndex++, staff.getUpdatedDate());
 					pstm.setString(parameterIndex++, staff.getUpdatedBy());
@@ -325,7 +325,7 @@ public class StaffDaoImpl implements StaffDao {
 				public void setValues(PreparedStatement pstm) throws SQLException {
 					int parameterIndex = 1;
 					
-					pstm.setString(parameterIndex++, staff.getActiveFlag());
+					pstm.setString(parameterIndex++, staff.getStatusCode());
 					pstm.setString(parameterIndex++, staff.getUpdatedBy());
 					pstm.setTimestamp(parameterIndex++, staff.getUpdatedDate());
 					pstm.setString(parameterIndex++, staff.getStaffCode());

@@ -61,10 +61,10 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 			user = userDao.findByUserName(auth.getName());
 		} catch (CommonException cx) {
 			
-			List<String> errors = ErrorUtil.getErrors(cx);
+			/*List<String> errors = ErrorUtil.getErrors(cx);
 			
-			logger.error(errors.get(0), cx);
-			throw new BadCredentialsException(errors.get(0), cx);
+			logger.error(errors.get(0), cx);*/
+			throw new BadCredentialsException("", cx);
 		}
 			
 		if (user == null) {
@@ -113,10 +113,10 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	            userDao.edit(user);
             } catch (CommonException cx) {
     			
-    			List<String> errors = ErrorUtil.getErrors(cx);
+    			/*List<String> errors = ErrorUtil.getErrors(cx);
     			
-    			logger.error(errors.get(0), cx);
-    			throw new BadCredentialsException(errors.get(0), cx);
+    			logger.error(errors.get(0), cx);*/
+    			throw new BadCredentialsException("", cx);
     		}
 			
 			throw new BadCredentialsException(msg);
@@ -130,11 +130,11 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 		try {
 	        userDao.edit(user);
         } catch (CommonException cx) {
-			
+			/*
 			List<String> errors = ErrorUtil.getErrors(cx);
 			
-			logger.error(errors.get(0), cx);
-			throw new BadCredentialsException(errors.get(0), cx);
+			logger.error(errors.get(0), cx);*/
+			throw new BadCredentialsException("", cx);
 		}
 		
 		return new UsernamePasswordAuthenticationToken(auth.getName(),

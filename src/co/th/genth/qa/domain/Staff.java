@@ -33,7 +33,7 @@ public class Staff implements Serializable {
     private String staffCode;
     private String staffName;
     private String sectionCode;
-    private String activeFlag;
+    private String statusCode;
     private Integer taskRatio;
     private Timestamp createdDate;
     private String createdBy;
@@ -47,14 +47,12 @@ public class Staff implements Serializable {
 	public Staff() {
 	}
 
-
 	/**
      * @return the staffCode
      */
     public String getStaffCode() {
     	return staffCode;
     }
-
 
 	/**
      * @param staffCode the staffCode to set
@@ -63,14 +61,12 @@ public class Staff implements Serializable {
     	this.staffCode = staffCode;
     }
 
-
 	/**
      * @return the staffName
      */
     public String getStaffName() {
     	return staffName;
     }
-
 
 	/**
      * @param staffName the staffName to set
@@ -79,14 +75,12 @@ public class Staff implements Serializable {
     	this.staffName = staffName;
     }
 
-
 	/**
      * @return the sectionCode
      */
     public String getSectionCode() {
     	return sectionCode;
     }
-
 
 	/**
      * @param sectionCode the sectionCode to set
@@ -95,22 +89,19 @@ public class Staff implements Serializable {
     	this.sectionCode = sectionCode;
     }
 
-
 	/**
-     * @return the activeFlag
+     * @return the statusCode
      */
-    public String getActiveFlag() {
-    	return activeFlag;
+    public String getStatusCode() {
+    	return statusCode;
     }
 
-
 	/**
-     * @param activeFlag the activeFlag to set
+     * @param statusCode the statusCode to set
      */
-    public void setActiveFlag(String activeFlag) {
-    	this.activeFlag = activeFlag;
+    public void setStatusCode(String statusCode) {
+    	this.statusCode = statusCode;
     }
-
 
 	/**
      * @return the taskRatio
@@ -119,14 +110,12 @@ public class Staff implements Serializable {
     	return taskRatio;
     }
 
-
 	/**
      * @param taskRatio the taskRatio to set
      */
     public void setTaskRatio(Integer taskRatio) {
     	this.taskRatio = taskRatio;
     }
-
 
 	/**
      * @return the createdDate
@@ -135,14 +124,12 @@ public class Staff implements Serializable {
     	return createdDate;
     }
 
-
 	/**
      * @param createdDate the createdDate to set
      */
     public void setCreatedDate(Timestamp createdDate) {
     	this.createdDate = createdDate;
     }
-
 
 	/**
      * @return the createdBy
@@ -151,14 +138,12 @@ public class Staff implements Serializable {
     	return createdBy;
     }
 
-
 	/**
      * @param createdBy the createdBy to set
      */
     public void setCreatedBy(String createdBy) {
     	this.createdBy = createdBy;
     }
-
 
 	/**
      * @return the updatedDate
@@ -167,14 +152,12 @@ public class Staff implements Serializable {
     	return updatedDate;
     }
 
-
 	/**
      * @param updatedDate the updatedDate to set
      */
     public void setUpdatedDate(Timestamp updatedDate) {
     	this.updatedDate = updatedDate;
     }
-
 
 	/**
      * @return the updatedBy
@@ -183,12 +166,11 @@ public class Staff implements Serializable {
     	return updatedBy;
     }
 
-
 	/**
      * @param updatedBy the updatedBy to set
      */
     public void setUpdatedBy(String updatedBy) {
     	this.updatedBy = updatedBy;
     }
-	
+    
 }
