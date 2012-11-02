@@ -11,7 +11,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	
 	<!-- Declare a JDBC entityManagerFactory-->
-	<bean id="qaDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:comp/env/jdbc/cmsQADB" />
         <property name="lookupOnStartup" value="true" />
         <property name="cache" value="true" />
@@ -19,21 +19,25 @@
     </bean>
 
 	<!-- Declare a transaction manager-->
-	<bean id="txManagerQA" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="qaDataSource" />
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
     
     <!-- Declare a JDBC Template-->
 	<bean id="qaJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"> 
-    	<property name="dataSource" ref="qaDataSource"/>
+    	<property name="dataSource" ref="dataSource"/>
     </bean>
+
+	<bean id="staffDao" class="co.th.genth.qa.dao.impl.StaffDaoImpl">
+		<property name="qaJdbcTemplate" ref="qaJdbcTemplate"></property>
+	</bean>
 	
 	<!-- Definition Service Bean -->
    <bean id="staffServices" class="co.th.genth.qa.services.StaffServices">
-      	<property name="txManager"  ref="txManagerQA" />    
+      	<property name="txManager"  ref="txManager" />
    </bean>
 
-	<!-- <tx:annotation-driven mode="proxy" transaction-manager="txManagerAPS" /> -->
+	<!-- <tx:annotation-driven mode="proxy" transaction-manager="txManager" /> -->
 
 	<!-- This required so that Spring can recognize our annotated beans -->
 	<context:annotation-config />

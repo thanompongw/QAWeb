@@ -45,7 +45,7 @@ public class StaffDaoImpl implements StaffDao {
 	private static Logger logger = Logger.getLogger(StaffDaoImpl.class);
 	
 	@Autowired
-	private JdbcTemplate ccsJdbcTemplate;
+	private JdbcTemplate qaJdbcTemplate;
 
 	/**
 	 * Default Constructor of StaffDaoImpl.java
@@ -101,7 +101,7 @@ public class StaffDaoImpl implements StaffDao {
 		
 		try {
 		
-			staff = ccsJdbcTemplate.queryForObject(sql.toString(), 
+			staff = qaJdbcTemplate.queryForObject(sql.toString(), 
 			                                    new String[] { staffCode }, 
 			                                    new StaffRowMapper());
 
@@ -157,7 +157,7 @@ public class StaffDaoImpl implements StaffDao {
 		
 		try {
 		
-			staffs = ccsJdbcTemplate.query(sql.toString(), 
+			staffs = qaJdbcTemplate.query(sql.toString(), 
 			                            args.toArray(new String[args.size()]), 
 			                            new StaffRowMapper());
 
@@ -193,7 +193,7 @@ public class StaffDaoImpl implements StaffDao {
 		
 		try {
 		
-			staffs = ccsJdbcTemplate.query(sql.toString(), 
+			staffs = qaJdbcTemplate.query(sql.toString(), 
 			                               new StaffRowMapper());
 
 		} catch (EmptyResultDataAccessException ex) {
@@ -254,7 +254,7 @@ public class StaffDaoImpl implements StaffDao {
 				}
 			};
 	
-			ccsJdbcTemplate.update(sql.toString(), pss);
+			qaJdbcTemplate.update(sql.toString(), pss);
 
 		} catch (Exception ex) {
     		logger.error(ex.getMessage(), ex);
@@ -296,7 +296,7 @@ public class StaffDaoImpl implements StaffDao {
 				}
 			};
 	
-			ccsJdbcTemplate.update(sql.toString(), pss);
+			qaJdbcTemplate.update(sql.toString(), pss);
 
 		} catch (Exception ex) {
     		logger.error(ex.getMessage(), ex);
@@ -333,7 +333,7 @@ public class StaffDaoImpl implements StaffDao {
 				}
 			};
 	
-			ccsJdbcTemplate.update(sql.toString(), pss);
+			qaJdbcTemplate.update(sql.toString(), pss);
 
 		} catch (Exception ex) {
     		logger.error(ex.getMessage(), ex);
@@ -343,10 +343,10 @@ public class StaffDaoImpl implements StaffDao {
 	}
 
 	/**
-     * @param ccsJdbcTemplate the ccsJdbcTemplate to set
+     * @param qaJdbcTemplate the qaJdbcTemplate to set
      */
-    public void setCcsJdbcTemplate(JdbcTemplate ccsJdbcTemplate) {
-    	this.ccsJdbcTemplate = ccsJdbcTemplate;
+    public void setQaJdbcTemplate(JdbcTemplate qaJdbcTemplate) {
+    	this.qaJdbcTemplate = qaJdbcTemplate;
     }
 	
 }

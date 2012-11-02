@@ -31,7 +31,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +54,7 @@ import co.th.genth.qa.web.validator.StaffValidator;
 @RequestMapping("staff")
 public class StaffController {
 	
-	@Resource(name = "staffService")
+	@Resource(name = "staffServices")
 	private StaffServices services;
 	
 	@Autowired
@@ -71,10 +70,10 @@ public class StaffController {
 	}
 	
 	@RequestMapping(value = "create", method = RequestMethod.GET)
-	public ModelAndView showCreatePage(ModelMap model) {
+	public ModelAndView showCreatePage() {
 		
 		// Initialize our custom agent model wrapper
-		return new ModelAndView("tmChannel/create", "tmChannel", new StaffModel());
+		return new ModelAndView("staff/create", "staff", new Staff());
 	}
 	
 	@ModelAttribute("sections")
@@ -116,13 +115,12 @@ public class StaffController {
 	}
 	
 	@RequestMapping(value = "validate", method = RequestMethod.POST)
-	public @ResponseBody QAResponse validate(Model model, 
-	                                         @ModelAttribute(value="staff") StaffModel staff, 
+	public @ResponseBody QAResponse validate(@ModelAttribute(value="staff") StaffModel model, 
 	                                         BindingResult result) {
 		QAResponse response = new QAResponse();
 
 		// Do custom validation here or in your service
-		validator.validate(staff, result);
+		validator.validate(model, result);
 		
 		if (!result.hasErrors()) {
 			response.setStatusCode(QAConstant.SUCCESS_CODE);
@@ -134,13 +132,14 @@ public class StaffController {
 		return response;
 	}
 	
-	@RequestMapping(value = "save", method = RequestMethod.POST)
-	public String add(@ModelAttribute("newStaff") Staff model,
-				 	  BindingResult result,
-				 	  QAResponse response) {
+	@RequestMapping(value = "create", method = RequestMethod.POST)
+	/*public ModelAndView add(@ModelAttribute("newStaff") Staff staff,*/
+	public @ResponseBody QAResponse add(@ModelAttribute("newStaff") Staff staff,
+	                                    BindingResult result) {
+		QAResponse response = new QAResponse();
 		try {
 			// Do custom validation here or in your service
-			validator.validate(model, result);
+			validator.validate(staff, result);
 			if (result.hasErrors()) {
 				// A failure. Return a custom model as well				
 				response.setErrorMessages(messageResolver.handleFieldErrorMessage(result));
@@ -149,18 +148,12 @@ public class StaffController {
 	
 				// Construct our staff object
 				// Assign the values from the parameters
-				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 				
-				String createdBy = auth.getName();
+//				String createdBy = auth.getName();
+				String createdBy = "006369";
 				Timestamp createdDate = new Timestamp(System.currentTimeMillis());
 				
-				Staff staff = new Staff();
-				
-				staff.setStaffCode(model.getStaffCode());
-				staff.setStaffName(model.getStaffName());
-				staff.setSectionCode(model.getSectionCode());
-				staff.setTaskRatio(model.getTaskRatio());
-				staff.setStatusCode(QAConstant.ACTIVE_FLAG);
 				staff.setCreatedBy(createdBy);
 				staff.setCreatedDate(createdDate);
 				staff.setUpdatedBy(createdBy);
@@ -177,7 +170,10 @@ public class StaffController {
 			response.setErrorMessages(ErrorUtil.getErrors(cx));
         }
 		
-		return "create";
+		/*ModelAndView model = new ModelAndView("staff/create", "staff", staff);
+		model.addObject("response", response);*/
+		
+		return response;
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.POST)

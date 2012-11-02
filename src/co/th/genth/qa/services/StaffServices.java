@@ -34,7 +34,7 @@ import co.th.genth.qa.dao.StaffDao;
 import co.th.genth.qa.domain.Staff;
 import co.th.genth.qa.exception.CommonException;
 
-@Service(value = "staffService")
+@Service(value = "staffServices")
 public class StaffServices {
 	
 	private static Logger logger = Logger.getLogger(StaffServices.class);
@@ -60,20 +60,24 @@ public class StaffServices {
     
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
     public void createStaff(Staff staff) throws CommonException {
-
-    	TransactionDefinition txDef = new DefaultTransactionDefinition();
-		txStatus = txManager.getTransaction(txDef);
 		
 		try {
+
+	    	TransactionDefinition txDef = new DefaultTransactionDefinition();
+			txStatus = txManager.getTransaction(txDef);
 			
 			dao.add(staff);
 	        
 	        txManager.commit(txStatus);
 	    } catch (CommonException cx) {
-	    	txManager.rollback(txStatus);
+	    	if (txManager != null ) {
+	    		txManager.rollback(txStatus);
+	    	}
 	    	throw cx;
 	    } catch (Exception ex) {
-	    	txManager.rollback(txStatus);
+	    	if (txManager != null ) {
+	    		txManager.rollback(txStatus);
+	    	}
 			logger.error(ex.getMessage(), ex);
 			throw ErrorUtil.generateError("MSTD0004AERR", ex.getMessage());
 	    }

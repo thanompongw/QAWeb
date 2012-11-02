@@ -40,6 +40,7 @@ button span.label, .button span.label {
 <script type="text/javascript" src="<c:url value='/js/jquery.dataTables.min.js' />"></script>
 <script type="text/javascript" src="<c:url value='/js/DT_bootstrap.js' />"></script>
 <script type="text/javascript" src="<c:url value='/bootstrap/js/bootstrap.js' />"></script>
+<script type="text/javascript" src="<c:url value='/js/jqBootstrapValidation.js' />"></script>
 <script type="text/javascript" src="<c:url value='/js/qaApp.js' />"></script>
 
 <script type="text/javascript">
@@ -47,6 +48,8 @@ $(document).ready(function() {
 	// Launch TipTip tooltip
 	$('.tiptip a.button, .tiptip button').tipTip();
 });
+
+$(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
 
 </script>
 

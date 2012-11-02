@@ -79,7 +79,7 @@ public class StaffValidator implements Validator {
 									  new Object[] { "Task Ratio" });
 		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, 
-		                                          "activeFlag", 
+		                                          "statusCode", 
 		                                          "MSTD0031AERR",
 		                                          new Object[] { "Status" });
 		
