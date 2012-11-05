@@ -30,11 +30,9 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import co.th.genth.qa.QAConstant;
@@ -73,7 +71,7 @@ public class StaffController {
 	public ModelAndView showCreatePage() {
 		
 		// Initialize our custom agent model wrapper
-		return new ModelAndView("staff/create", "staff", new Staff());
+		return new ModelAndView("staff/create", "staff", new StaffModel());
 	}
 	
 	@ModelAttribute("sections")
@@ -100,41 +98,47 @@ public class StaffController {
 	}
 	
 	@RequestMapping(value = "edit", method = RequestMethod.GET)
-	public ModelAndView showEditPage() {
+	public ModelAndView showEditPage(@RequestParam("staffCode") String staffCode) {
+		
+		Staff staff = null;
+		
+		try {
+			staff = services.findById(staffCode);
+        } catch (CommonException e) {
+        	/*dtRes.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
+        	dtRes.setMessages(ErrorUtil.getErrors(cx));*/
+        }
 
 		// Initialize our custom agent model wrapper
-		return new ModelAndView("staff/edit", "staff", new StaffModel());
+		return new ModelAndView("staff/edit", "staff", staff);
 	}
 	
 	@RequestMapping(value = "list", method = RequestMethod.POST)
-	public @ResponseBody DataTablesResponse<Staff> list(@RequestBody DataTablesRequest dtReq, 
+	public @ResponseBody DataTablesResponse<Staff> list(@RequestBody DataTablesRequest<Staff> dtReq, 
 	                                                    HttpServletResponse response) {
-
-		// Initialize our custom agent model wrapper
-		return new DataTablesResponse<Staff>();
-	}
-	
-	@RequestMapping(value = "validate", method = RequestMethod.POST)
-	public @ResponseBody QAResponse validate(@ModelAttribute(value="staff") StaffModel model, 
-	                                         BindingResult result) {
-		QAResponse response = new QAResponse();
-
-		// Do custom validation here or in your service
-		validator.validate(model, result);
 		
-		if (!result.hasErrors()) {
-			response.setStatusCode(QAConstant.SUCCESS_CODE);
-		} else {
-			// A failure. Return a custom model as well				
-			response.setErrorMessages(messageResolver.handleFieldErrorMessage(result));
-			response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
-		}
-		return response;
+		DataTablesResponse<Staff> dtRes = new DataTablesResponse<Staff>();
+		
+		// Call service get data list
+		try {
+			
+			List<Staff> staffs = services.list();
+			
+			dtRes.setTotalDisplayRecords(10);
+			dtRes.setTotalRecords(staffs.size());
+			dtRes.setEcho(dtReq.echo);
+			dtRes.setData(staffs);
+        } catch (CommonException cx) {
+        	/*dtRes.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
+        	dtRes.setMessages(ErrorUtil.getErrors(cx));*/
+        }
+		
+		// Initialize our custom agent model wrapper
+		return dtRes;
 	}
 	
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	/*public ModelAndView add(@ModelAttribute("newStaff") Staff staff,*/
-	public @ResponseBody QAResponse add(@ModelAttribute("newStaff") Staff staff,
+	public @ResponseBody QAResponse add(@ModelAttribute("newStaff") StaffModel staff,
 	                                    BindingResult result) {
 		QAResponse response = new QAResponse();
 		try {
@@ -142,7 +146,7 @@ public class StaffController {
 			validator.validate(staff, result);
 			if (result.hasErrors()) {
 				// A failure. Return a custom model as well				
-				response.setErrorMessages(messageResolver.handleFieldErrorMessage(result));
+				response.setMessages(messageResolver.handleFieldErrorMessage(result));
 				response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
 			} else {
 	
@@ -164,88 +168,89 @@ public class StaffController {
 
 				// Success. Return a custom model
 				response.setStatusCode(QAConstant.SUCCESS_CODE);
+				response.setMessages(messageResolver.handleMessage("MQA0001INFO", null));
 			}
 		} catch (CommonException cx) {
 			response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
-			response.setErrorMessages(ErrorUtil.getErrors(cx));
+			response.setMessages(ErrorUtil.getErrors(cx));
         }
-		
-		/*ModelAndView model = new ModelAndView("staff/create", "staff", staff);
-		model.addObject("response", response);*/
 		
 		return response;
 	}
 	
-	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public @ResponseBody QAResponse edit(@ModelAttribute("exitingStaff") Staff model,
-				 						   BindingResult result,
-				 						   SessionStatus status) {
+	@RequestMapping(value = "edit", method = RequestMethod.POST)
+	public @ResponseBody QAResponse edit(@ModelAttribute("exitingStaff") StaffModel staff,
+				 						 BindingResult result) {
 
-		QAResponse returnModel = new QAResponse();
+		QAResponse response = new QAResponse();
 		try {
 			// Do custom validation here or in your service
-			validator.validate(model, result);
+			validator.validate(staff, result);
 			if (result.hasErrors()) {
 				// A failure. Return a custom model as well				
-				returnModel.setErrorMessages(messageResolver.handleFieldErrorMessage(result));
-				returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
+				response.setMessages(messageResolver.handleFieldErrorMessage(result));
+				response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
 			} else {
 	
 				// Construct our user object
 				// Assign the values from the parameters
-				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 				
 				// Call service to get existing staff data.
-				Staff staff = new Staff();
+				Staff existingStaff = new Staff();
 				
-				staff.setStaffCode(model.getStaffCode());
-				staff.setStaffName(model.getStaffName());
-				staff.setSectionCode(model.getSectionCode());
-				staff.setTaskRatio(model.getTaskRatio());
-				staff.setUpdatedBy(auth.getName());
-				staff.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
+				existingStaff.setStaffName(staff.getStaffName());
+				existingStaff.setSectionCode(staff.getSectionCode());
+				existingStaff.setTaskRatio(staff.getTaskRatio());
+				existingStaff.setStatusCode(staff.getStatusCode());
+				existingStaff.setUpdatedBy("006369");
+				existingStaff.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
 				
 				// Call service to update
-				services.updateStaff(staff);
+				services.updateStaff(existingStaff);
 
 				// Success. Return a custom model
-				returnModel.setStatusCode(QAConstant.SUCCESS_CODE);
-				status.setComplete();
+				response.setStatusCode(QAConstant.SUCCESS_CODE);
+				response.setMessages(messageResolver.handleMessage("MQA0001INFO", null));
 			}
 		} catch (CommonException cx) {
-			returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
-			returnModel.setErrorMessages(ErrorUtil.getErrors(cx));
+			response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
+			response.setMessages(ErrorUtil.getErrors(cx));
         }
 		
-		return returnModel;
+		return response;
 	}
 	
 	@RequestMapping(value = "delete", method = RequestMethod.POST)
-	public @ResponseBody QAResponse delete(@ModelAttribute("exitingStaff") Staff model) {
+	/*public @ResponseBody QAResponse delete(@RequestBody StaffModel staff,
+	                                        HttpServletResponse response) {*/
+	public @ResponseBody QAResponse delete(@ModelAttribute("exitingStaff") StaffModel staff,
+	                                       BindingResult result) {
 
-		QAResponse returnModel = new QAResponse();
+		QAResponse response = new QAResponse();
 		try {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			
-			// Call service to get existing staff data.
-			Staff staff = new Staff();
-
-			staff.setStatusCode(QAConstant.INACTIVE_FLAG);
-			staff.setStaffCode(model.getStaffCode());
-			staff.setUpdatedBy(auth.getName());
-			staff.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
+			Staff existingStaff = new Staff();
+			
+			existingStaff.setStatusCode(QAConstant.INACTIVE_FLAG);
+			existingStaff.setStaffCode(staff.getStaffCode());
+			existingStaff.setUpdatedBy("006369");
+			existingStaff.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
 			
 			// Call service to delete.
-			services.deleteStaff(staff);
+			services.deleteStaff(existingStaff);
 
 			// Success. Return a custom model
-			returnModel.setStatusCode(QAConstant.SUCCESS_CODE);
+			response.setStatusCode(QAConstant.SUCCESS_CODE);
+			response.setMessages(messageResolver.handleMessage("MQA0001INFO", null));
+			
 		} catch (CommonException cx) {
-			returnModel.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
-			returnModel.setErrorMessages(ErrorUtil.getErrors(cx));
+			response.setStatusCode(QAConstant.INTERNAL_ERROR_CODE);
+			response.setMessages(ErrorUtil.getErrors(cx));
         }
 		
-		return returnModel;
+		return response;
 	}
 	
 	@InitBinder

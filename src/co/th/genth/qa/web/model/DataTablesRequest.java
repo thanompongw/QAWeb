@@ -27,7 +27,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  *
  * @author Thanompong.W
  */
-public class DataTablesRequest implements Serializable {
+public class DataTablesRequest<T> implements Serializable {
 
     /** serialVersionUID property **/
     private static final long serialVersionUID = 1167997462055067115L;
@@ -49,7 +49,7 @@ public class DataTablesRequest implements Serializable {
 
     //has to be revisited for Object type dataProps.
     @JsonProperty(value = "amDataProp")
-    public List<Integer> dataProp;
+    public List<T> dataProp;
 
     @JsonProperty(value = "sSearch")
     public String searchQuery;
@@ -70,7 +70,7 @@ public class DataTablesRequest implements Serializable {
     public int sortingCols;
 
     @JsonProperty(value = "aiSortCol")
-    public List<Integer> sortedColumns;
+    public List<T> sortedColumns;
 
     @JsonProperty(value = "asSortDir")
     public List<String> sortDirections;

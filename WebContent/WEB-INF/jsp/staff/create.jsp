@@ -11,17 +11,14 @@
 		<form:form id="form" method="post" commandName="staff" class="form-horizontal"
 			action="create.html">
 			<div class="alert alert-error fade in" data-alert="alert" style="top:0">
-			   	<button type="button" class="close" data-dismiss="alert">×</button>
 				<h4 class="alert-heading">Error!</h4>
 			   	<strong><span id="message-error"></span></strong>
 			</div>
 			<div class="alert alert-block fade in" data-alert="alert" style="top:0">
-			   	<button type="button" class="close" data-dismiss="alert">×</button>
 				<h4 class="alert-heading">Warning!</h4>
 			   	<strong><span id="message-warning"></span></strong>
 			</div>
 			<div class="alert alert-success fade in" data-alert="alert" style="top:0">
-			   	<button type="button" class="close" data-dismiss="alert">×</button>
 				<h4 class="alert-heading">Well Done!</h4>
 			   	<strong><span id="message-success"></span></strong>
 			</div>
@@ -89,35 +86,35 @@
 				
 			$(document).ready(function() {
 				
-				$('.alert').fadeIn(400);
 				$('.alert').hide();
+				$('#staffCode').focus();
 				
 				$(':input').blur(function() {
-					window.setTimeout(function() { $(".alert").slideUp(); }, 1000);
+					window.setTimeout(function() { $(".alert").slideUp(); }, 0);
 				});
 				
 				var $form = $('#form');
 				$('#form').submit(function() {
 					$.post($(this).attr("action"), $(this).serialize(), function(response) {		
 						if (response.statusCode == '500') {
-							for (var i = 0; i < response.errorMessages.length; i++) {
-								var item = response.errorMessages[i];
+							for (var i = 0; i < response.messages.length; i++) {
+								var item = response.messages[i];
 								$('#message-error').html(item.message);
 								$('.alert-error').show();
 							}
 						} else if (response.statusCode == '400') {
-							for (var i = 0; i < response.errorMessages.length; i++) {
+							for (var i = 0; i < response.messages.length; i++) {
 								var item = response.errorMessages[i];
 								$('#message-warning').html(item.message);
 								$('.alert-block').show();
 							}
 						} else {
-							for (var i = 0; i < response.errorMessages.length; i++) {
-								var item = response.errorMessages[i];
+							for (var i = 0; i < response.messages.length; i++) {
+								var item = response.messages[i];
 								$('#message-success').html(item.message);
 								$('.alert-success').show();
 								
-								window.setTimeout(function() { $(".alert").slideUp(); }, 5000);
+								window.setTimeout(function() { $(".alert").slideUp(); }, 10000);
 							}
 						}
 					});

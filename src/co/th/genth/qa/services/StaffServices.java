@@ -140,6 +140,23 @@ public class StaffServices {
     }
     
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public Staff findById(String staffCode) throws CommonException {
+    	Staff staff = null;
+    	try {
+			
+    		staff = dao.findById(staffCode);
+	        
+	    } catch (CommonException cx) {
+	    	throw cx;
+	    } catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+			throw ErrorUtil.generateError("MSTD0004AERR", ex.getMessage());
+	    }
+    	
+    	return staff;
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<Staff> search(Staff searchObj) throws CommonException {
     	List<Staff> staffs = null;
     	try {

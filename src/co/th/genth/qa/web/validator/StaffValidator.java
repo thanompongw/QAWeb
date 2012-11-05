@@ -27,7 +27,7 @@ import co.th.genth.qa.common.util.ErrorUtil;
 import co.th.genth.qa.dao.StaffDao;
 import co.th.genth.qa.domain.Staff;
 import co.th.genth.qa.exception.CommonException;
-import co.th.genth.qa.exception.ErrorMessage;
+import co.th.genth.qa.exception.Message;
 
 /**
  * @author Thanompong.W
@@ -98,7 +98,7 @@ public class StaffValidator implements Validator {
 									  "");
 					}
 	            } catch (CommonException cx) {
-	            	errors.reject("MSTD0000AERR", ((ErrorMessage) ErrorUtil.getErrors(cx).get(0)).getMessage());
+	            	errors.reject("MSTD0000AERR", ((Message) ErrorUtil.getErrors(cx).get(0)).getMessage());
 	            }
 			}			
 		}

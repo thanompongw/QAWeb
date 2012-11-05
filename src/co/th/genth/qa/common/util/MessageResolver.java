@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.*;
 
-import co.th.genth.qa.exception.ErrorMessage;
+import co.th.genth.qa.exception.Message;
 
 /**
  * @author Thanopong.W
@@ -52,11 +52,11 @@ public class MessageResolver {
 		}
 	}
 
-	public String getMessage(String keyCode) {
-		return this.getMessage(keyCode, null);
+	public String getMessageStr(String keyCode) {
+		return this.getMessageStr(keyCode, null);
 	}
 
-	public String getMessage(String keyCode, Object[] msgArgs) {
+	public String getMessageStr(String keyCode, Object[] msgArgs) {
 		String message = null;
 		if (properties.get(keyCode) != null) {
 			message = properties.get(keyCode).toString();
@@ -75,8 +75,24 @@ public class MessageResolver {
 		return message;
 	}
 
-	public ErrorMessage getErrorMessage(String keyCode, Object[] msgArgs) {
-		ErrorMessage errorMessage = new ErrorMessage();
+	public Message getMessage(String keyCode, Object[] msgArgs) {
+		Message message = new Message();
+		if (properties.get(keyCode) != null) {
+			message.setMessage(properties.get(keyCode).toString());
+		}
+
+		if (msgArgs == null || msgArgs.length == 0) {
+			return message;
+		}
+		
+		message.setMessage(MessageFormat.format(addSingleQuotation(properties.get(keyCode).toString()), 
+		                                        msgArgs));
+
+		return message;
+	}
+
+	public Message getErrorMessage(String keyCode, Object[] msgArgs) {
+		Message errorMessage = new Message();
 		if (properties.get(keyCode) != null) {
 			errorMessage.setMessage(properties.get(keyCode).toString());
 		}
@@ -91,15 +107,33 @@ public class MessageResolver {
 		return errorMessage;
 	}
 	
-	public List<ErrorMessage> handleFieldErrorMessage(BindingResult result) {
-		List<ErrorMessage> errors = new ArrayList<ErrorMessage>();
+	public List<Message> handleFieldErrorMessage(BindingResult result) {
+		List<Message> errors = new ArrayList<Message>();
 		
-		for (FieldError fieldError : result.getFieldErrors()) {
-			ErrorMessage errorMessage = this.getErrorMessage(fieldError.getCode(), fieldError.getArguments());
-		    errorMessage.setFieldName(fieldError.getField());
+		for (Object object : result.getAllErrors()) {
+			Message message = null;
+			if(object instanceof FieldError) {
+		        FieldError fieldError = (FieldError) object;
+		        
+		        message = this.getErrorMessage(fieldError.getCode(), fieldError.getArguments());
+		    }
+
+		    if(object instanceof ObjectError) {
+		        ObjectError objectError = (ObjectError) object;
+		        
+		        message = this.getMessage(objectError.getCode(), objectError.getArguments());
+		    }
 		    
-		    errors.add(errorMessage);
+		    errors.add(message);
 		}
+		
+		return errors;
+	}
+	
+	public List<Message> handleMessage(String keyCode, Object[] msgArgs) {
+		List<Message> errors = new ArrayList<Message>();
+		
+		errors.add(getMessage(keyCode, msgArgs));
 		
 		return errors;
 	}

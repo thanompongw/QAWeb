@@ -27,7 +27,7 @@ import co.th.genth.qa.common.util.ErrorUtil;
 import co.th.genth.qa.dao.UserDao;
 import co.th.genth.qa.domain.User;
 import co.th.genth.qa.exception.CommonException;
-import co.th.genth.qa.exception.ErrorMessage;
+import co.th.genth.qa.exception.Message;
 import co.th.genth.qa.web.model.UserModel;
 
 /**
@@ -79,7 +79,7 @@ public class UserValidator implements Validator {
 									  "");
 					}	
                 } catch (CommonException cx) {
-                	errors.reject("MSTD0000AERR", ((ErrorMessage) ErrorUtil.getErrors(cx).get(0)).getMessage());
+                	errors.reject("MSTD0000AERR", ((Message) ErrorUtil.getErrors(cx).get(0)).getMessage());
                 }			
 			}
 		}

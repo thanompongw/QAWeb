@@ -2,118 +2,230 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<style type="text/css" media="screen">
 
-.select {
-	width: auto;
-}
-
-</style>
-<html>
-<body>
 <div class="span9">
 	<div class="page-header">
-		<h1>Edit Staff</h1>
+		<h1><spring:message code="staff.page.edit.title"/> </h1>
 	</div>
 	<div id="pageContent">
-		<form:form id="form" method="post" modelAttribute="staff" class="form-horizontal"
-			action="update.html">
-			<c:if test="${ not empty message }">
-				<div class="alert">
-					<button type="button" class="close" data-dismiss="alert">×</button>
-					<strong id="message">${ message }</strong>
-				</div>
-			</c:if>
-			<div class="control-group">
+		<form:form id="form" method="post" commandName="staff" class="form-horizontal"
+			action="edit.html">
+			<div class="alert alert-error fade in" data-alert="alert" style="top:0">
+				<h4 class="alert-heading">Error!</h4>
+			   	<strong><span id="message-error"></span></strong>
+			</div>
+			<div class="alert alert-block fade in" data-alert="alert" style="top:0">
+				<h4 class="alert-heading">Warning!</h4>
+			   	<strong><span id="message-warning"></span></strong>
+			</div>
+			<div class="alert alert-success fade in" data-alert="alert" style="top:0">
+				<h4 class="alert-heading">Well Done!</h4>
+			   	<strong><span id="message-success"></span></strong>
+			</div>
+			<div class="control-group" id="staffCode">
 				<form:label class="control-label" path="staffCode"> 
-					Staff Code
+					<spring:message code="staff.page.lbl.code"/>
 				</form:label>
 				<div class="controls">
-					<form:input path="staffCode" placeholder="Staff Code" cssClass="uneditable-input" readonly="true"/> 
-					<form:errors path="staffCode" />
+					<input type="text" id="staffCode" name="staffCode" placeholder="Staff Code" maxlength="6" required
+					value="<c:out value="${ staff.staffCode }" />" class="uneditable-input"/>
 				</div>
 			</div>	
-			<div class="control-group">
+			<div class="control-group" id="staffName">
 				<form:label class="control-label" path="staffName">
-	  				Staff Name 
+					<spring:message code="staff.page.lbl.name"/>
 				</form:label>
 				<div class="controls">
-					<form:input path="staffName" />
-					<form:errors path="staffName" />
+					<input type="text" id="staffName" name="staffName" placeholder="Staff Name" maxlength="100" required
+					value="<c:out value="${ staff.staffName }" />" />
+					<span class="help-inline"><form:errors path="staffName" /></span>
 				</div>
 			</div>
-	  		<div class="control-group">
-				<form:label class="control-label"  path="sectionCode">
-					Section
+	  		<div class="control-group" id="sectionCode">
+				<form:label class="control-label" path="sectionCode">
+					<spring:message code="staff.page.lbl.section"/>
 				</form:label>
 				<div class="controls">
-					<form:select path="sectionCode">
-						<form:option value="CCC">Customer Care Center</form:option>
-						<form:option value="BR">Business Retention</form:option>
-						<form:option value="POS">Policy Operation Services</form:option>
-					</form:select>
+					<select id="sectionCode" name="sectionCode" required>
+						<option value="">------------ Select ------------</option>
+					    <c:forEach items="${ sections }" var="section">
+					    	<c:choose>
+								<c:when test="${ staff.sectionCode == section.code }">
+						        	<option value="${ section.code }" selected="selected">${ section.value }</option>
+								</c:when>
+								<c:otherwise>
+						        	<option value="${ section.code }">${ section.value }</option>
+								</c:otherwise>
+							</c:choose>
+					    </c:forEach>
+					</select>
 				</div>
 			</div>
-	 		<div class="control-group">
+	 		<div class="control-group" id="taskRatio">
 	 			<form:label class="control-label" path="taskRatio">
-	  				Task Ratio 
+					<spring:message code="staff.page.lbl.taskRatio"/>
 				</form:label>
 				<div class="controls">
-					<form:input path="taskRatio" />
-					<form:errors path="taskRatio" />
+					<input type="number" id="taskRatio" name="taskRatio" placeholder="Task Ratio" max="100" required 
+					value="<c:out value="${ staff.taskRatio }" />" />
 				</div>
 			</div>
-			<div class="control-group">
-				<form:label class="control-label"  path="activeFlag">
-					Status
+			<div class="control-group" id="statusCode">
+				<form:label class="control-label" path="statusCode">
+					<spring:message code="staff.page.lbl.status"/>
 				</form:label>
 				<div class="controls">
-					<form:select path="activeFlag">
-						<form:option value="Y">Active</form:option>
-						<form:option value="N">Inactive</form:option>
-					</form:select>
+					<select id="statusCode" name="statusCode" required>
+						<option value="">--- Select ---</option>
+					    <c:forEach items="${ statuses }" var="status">
+					    	<c:choose>
+								<c:when test="${ staff.statusCode == status.code }">
+						        	<option value="${ status.code }" selected="selected">${ status.value }</option>
+								</c:when>
+								<c:otherwise>
+					        		<option value="${ status.code }">${ status.value }</option>
+								</c:otherwise>
+					        </c:choose>
+					    </c:forEach>
+					</select>
 				</div>
 			</div>
 	
-			<button type="submit" class="action blue">
-				<span class="icon icon67"></span>
-				<span class="label"><spring:message code="btn.lbl.update"></spring:message></span>
+			<button type="submit" class="action blue" id="btnSave">
+				<span class="label"><spring:message code="btn.lbl.save"/></span>
 			</button>
-			<button type="submit" class="action red">
-				<span class="icon icon186"></span>
-				<span class="label"><spring:message code="btn.lbl.delete"></spring:message></span>
+			<button type="button" class="action red" id="btnDelete">
+				<span class="label"><spring:message code="btn.lbl.del"/></span>
 			</button>
-			<button class="action" onclick="goBack();">
-				<span class="icon icon35"></span>
-				<span class="label"><spring:message code="btn.lbl.cancel"></spring:message></span>
+			<button type="button" class="action" id="btnCancel">
+				<span class="label"><spring:message code="btn.lbl.cancel"/></span>
 			</button>
 		</form:form>
 		
 		<script type="text/javascript">
-		
-			function goBack() {
-			    $(this).delay(5000, function() {
-			      	history.back(-1);
-			    })
-			    return false;
-		    }
-			
+				
 			$(document).ready(function() {
-				$("#form").submit(function() {  
-					$.post($(this).attr("action"), $(this).serialize(), function(html) {
-						var messages = html.messages;
-						var message = "";
-						for (var i = 0; i < messages.length; i++) {
-							message = message + messages[i] + "/n";
+				
+				$('.alert').hide();
+				$('#staffName').focus();
+				
+				$(':input').blur(function() {
+					window.setTimeout(function() { $(".alert").slideUp(); }, 0);
+				});
+				
+				var $form = $('#form');
+				$('#form').submit(function() {
+					$.post($(this).attr("action"), $(this).serialize(), function(response) {
+						if (response.statusCode == '500') {
+							for (var i = 0; i < response.messages.length; i++) {
+								var item = response.messages[i];
+								$('#message-error').html(item.message);
+								$('.alert-error').show();
+							}
+						} else if (response.statusCode == '400') {
+							for (var i = 0; i < response.messages.length; i++) {
+								var item = response.errorMessages[i];
+								$('#message-warning').html(item.message);
+								$('.alert-block').show();
+							}
+						} else {
+							for (var i = 0; i < response.messages.length; i++) {
+								var item = response.messages[i];
+								$('#message-success').html(item.message);
+								$('.alert-success').show();
+								
+								window.setTimeout(function() { 
+									$(".alert").slideUp();
+									document.location.href = 'index.html';
+								}, 1000);
+								
+							}
 						}
-						$("#pageContent").replaceWith(message);
-						$('html, body').animate({ scrollTop: 60 }, 500);
 					});
 					return false;
-				});			
+				});
+				
+				$('#btnCancel').click(function() {
+					$(this).closest('form')
+						   .find('input[type=text], textarea, select').val("");
+					history.back();
+				});
+				
+				$('#btnDelete').click(function() {
+					var data = {
+						"staffCode": '<c:out value="${ staff.staffCode }" />'
+					}
+					
+					alert(JSON.stringify(data));
+					$.post("delete.html", data, function(response) {
+						if (response.statusCode == '500') {
+							for (var i = 0; i < response.messages.length; i++) {
+								var item = response.messages[i];
+								$('#message-error').html(item.message);
+								$('.alert-error').show();
+							}
+						} else if (response.statusCode == '400') {
+							for (var i = 0; i < response.messages.length; i++) {
+								var item = response.errorMessages[i];
+								$('#message-warning').html(item.message);
+								$('.alert-block').show();
+							}
+						} else {
+							for (var i = 0; i < response.messages.length; i++) {
+								var item = response.messages[i];
+								$('#message-success').html(item.message);
+								$('.alert-success').show();
+								
+								window.setTimeout(function() { 
+									$(".alert").slideUp();
+									document.location.href = 'index.html';
+								}, 1000);
+								
+							}
+						}
+					});
+					/* var staff = {
+						"staffCode": $('#staffCode').val()
+					};
+					$.ajax({
+  						type: "POST",   
+						url: "delete.html",
+  						dataType: "json", 
+  						contentType: "application/json; charset=utf-8",         
+  						data: JSON.stringify(staff),
+  						success: function(response, textStatus, xhr) {
+  							if (response.statusCode == '500') {
+  								for (var i = 0; i < response.messages.length; i++) {
+  									var item = response.messages[i];
+  									$('#message-error').html(item.message);
+  									$('.alert-error').show();
+  								}
+  							} else if (response.statusCode == '400') {
+  								for (var i = 0; i < response.messages.length; i++) {
+  									var item = response.errorMessages[i];
+  									$('#message-warning').html(item.message);
+  									$('.alert-block').show();
+  								}
+  							} else {
+  								for (var i = 0; i < response.messages.length; i++) {
+  									var item = response.messages[i];
+  									$('#message-success').html(item.message);
+  									$('.alert-success').show();
+  									
+  									window.setTimeout(function() { 
+  										$(".alert").slideUp();
+  										document.location.href = 'index.html';
+  									}, 1000);
+  									
+  								}
+  							}
+  						},
+  						error: function (e) {
+							alert (e);
+  						}
+					}); */
+				});
 			});
 		</script>
 	</div>
 </div>
-</body>
-</html>

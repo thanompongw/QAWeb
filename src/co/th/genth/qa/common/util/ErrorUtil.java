@@ -39,13 +39,13 @@ public class ErrorUtil {
 	@Resource(name="messageService")
 	private static MessageResolver messageResolver = new MessageResolver();
 	
-	public static List<ErrorMessage> getErrors(CommonException e) {
+	public static List<Message> getErrors(CommonException e) {
         ErrorList errorList = e.getErrorList();
         
         if (errorList != null) {
             List<BusinessError> beList = errorList.getErrorList();
-            List<ErrorMessage> errorMessages = new ArrayList<ErrorMessage>();
-            ErrorMessage errorMessage = new ErrorMessage();
+            List<Message> errorMessages = new ArrayList<Message>();
+            Message errorMessage = new Message();
             
             for (BusinessError be : beList) {
                 String[] stSubsValues = be.getSubstitutionValues();
@@ -55,10 +55,10 @@ public class ErrorUtil {
                     for (int j = 0; j < formattedSubsValues.length; j++) {
                        formattedSubsValues[j] = removeSpChar(stSubsValues[j]);
                     }
-                    errorMessage.setMessage(messageResolver.getMessage(be.getErrorkey(), 
-                                                                       formattedSubsValues));
+                    errorMessage.setMessage(messageResolver.getMessageStr(be.getErrorkey(), 
+                                                                          formattedSubsValues));
                 } else {
-                	errorMessage.setMessage(messageResolver.getMessage(be.getErrorkey()));
+                	errorMessage.setMessage(messageResolver.getMessageStr(be.getErrorkey()));
                 }
                 
                 errorMessages.add(errorMessage);

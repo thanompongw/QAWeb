@@ -6,7 +6,7 @@ package co.th.genth.qa.web.model;
 import java.io.Serializable;
 import java.util.List;
 
-import co.th.genth.qa.exception.ErrorMessage;
+import co.th.genth.qa.exception.Message;
 
 
 /**
@@ -23,7 +23,7 @@ public class QAResponse implements Serializable {
     private static final long serialVersionUID = -309605945948282955L;
 	
 	private String statusCode;
-	private List<ErrorMessage> errorMessages;
+	private List<Message> messages;
 
 	/**
      * Default Constructor of GenericModel.java
@@ -46,17 +46,17 @@ public class QAResponse implements Serializable {
     }
 
 	/**
-     * @return the errorMessages
+     * @return the messages
      */
-    public List<ErrorMessage> getErrorMessages() {
-    	return errorMessages;
+    public List<Message> getMessages() {
+    	return messages;
     }
 
 	/**
-     * @param errorMessages the errorMessages to set
+     * @param messages the messages to set
      */
-    public void setErrorMessages(List<ErrorMessage> errorMessages) {
-    	this.errorMessages = errorMessages;
+    public void setMessages(List<Message> messages) {
+    	this.messages = messages;
     }
 
 }

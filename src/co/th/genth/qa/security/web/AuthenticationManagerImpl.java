@@ -68,24 +68,24 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 		}
 			
 		if (user == null) {
-			String msg = messageResolver.getMessage("MSTD0070AERR",
-			                                        new String[] { auth.getName() });
+			String msg = messageResolver.getMessageStr("MSTD0070AERR",
+			                                           new String[] { auth.getName() });
 			
 			logger.warn(msg);
 			throw new BadCredentialsException(msg);
 		}
 		
 		if (user.getInvalidLogin() >= 3) {
-			String msg = messageResolver.getMessage("MSTD0073AERR",
-			                                        new String[] { auth.getName() });
+			String msg = messageResolver.getMessageStr("MSTD0073AERR",
+			                                           new String[] { auth.getName() });
 			
 			logger.warn(msg);
 			throw new BadCredentialsException(msg);
 		}
 		
 		if (user.getActiveFlag().equals("")) {
-			String msg = messageResolver.getMessage("MSTD0072AERR",
-			                                        new String[] { auth.getName() });
+			String msg = messageResolver.getMessageStr("MSTD0072AERR",
+			                                           new String[] { auth.getName() });
 			
 			logger.warn(msg);
 			throw new BadCredentialsException(msg);
@@ -97,7 +97,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 		                                     (String) auth.getCredentials(),
 		                                     null)) {
 			
-			String msg = messageResolver.getMessage("MSTD0071AERR");
+			String msg = messageResolver.getMessageStr("MSTD0071AERR");
 			
 			logger.error(msg);
 			

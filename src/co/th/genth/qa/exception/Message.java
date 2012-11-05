@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Thanompong.W
  *
  */
-public class ErrorMessage implements Serializable {
+public class Message implements Serializable {
 	
 	/** serialVersionUID property **/
     private static final long serialVersionUID = 298432234151730486L;
@@ -35,7 +35,7 @@ public class ErrorMessage implements Serializable {
 	/**
 	 * Default Constructor of ErrorMessage.java
 	 */
-	public ErrorMessage() {
+	public Message() {
 	}
 
 	/**

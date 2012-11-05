@@ -326,8 +326,8 @@ public class StaffDaoImpl implements StaffDao {
 					int parameterIndex = 1;
 					
 					pstm.setString(parameterIndex++, staff.getStatusCode());
-					pstm.setString(parameterIndex++, staff.getUpdatedBy());
 					pstm.setTimestamp(parameterIndex++, staff.getUpdatedDate());
+					pstm.setString(parameterIndex++, staff.getUpdatedBy());
 					pstm.setString(parameterIndex++, staff.getStaffCode());
 					
 				}
